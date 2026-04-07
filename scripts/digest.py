@@ -808,7 +808,7 @@ def build_free_html(
         Upgrade to Basic to see all {total_matched} opportunities &mdash;
         {f"including {urgency_count} closing soon" if urgency_count > 0 else "apply before deadlines close"}
       </div>
-      <a href="https://dereks-newsletter-be7bae.beehiiv.com/upgrade"
+      <a href="https://grantcommand.com/upgrade"
          style="display:inline-block;background:#00897b;color:#ffffff;
                 font-size:15px;font-weight:bold;padding:12px 28px;
                 border-radius:8px;text-decoration:none;">
