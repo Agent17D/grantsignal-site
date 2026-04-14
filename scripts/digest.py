@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-GrantSignal Weekly Digest Pipeline
+GrantCommand Weekly Digest Pipeline
 -----------------------------------
 Fetches posted grants from Grants.gov, scores them for nonprofit/school
 relevance, builds FREE (top 3) and PAID (top 50) digest emails, sends them
@@ -33,7 +33,7 @@ import requests
 BEEHIIV_API_KEY = os.environ.get("BEEHIIV_API_KEY", "")
 BEEHIIV_PUB_ID  = os.environ.get("BEEHIIV_PUB_ID",  "")
 RESEND_API_KEY  = os.environ.get("RESEND_API_KEY",  "")
-FROM_EMAIL      = os.environ.get("FROM_EMAIL", "digest@grantsignal.news")
+FROM_EMAIL      = os.environ.get("FROM_EMAIL", "digest@grantcommand.com")
 GITHUB_TOKEN    = os.environ.get("GITHUB_TOKEN", "")
 GITHUB_REPO     = os.environ.get("GITHUB_REPO", "Agent17D/grantcommand-site")
 GITHUB_BRANCH   = os.environ.get("GITHUB_BRANCH", "main")
@@ -59,6 +59,9 @@ EXCLUDE_TITLE_PATTERNS = [
     "R25", "R01", "R03", "R21", "R34", "K08", "K23", "F31", "F32", "T32",
     "Clinical Trial", "Dissertation", "Fellowship", "Postdoctoral",
     "Career Development Award",
+    "EONS 2018", "Appendix E", "MUREP",
+    "NAGPRA", "Repatriation Grants", "Subaward",
+    "Information Collection", "Comment Request",
 ]
 
 RESEARCH_AGENCY_PATTERNS = [
@@ -164,7 +167,7 @@ def load_subscriber_preferences() -> dict:
     headers = {
         "Authorization": f"token {GITHUB_TOKEN}",
         "Accept":        "application/vnd.github.v3+json",
-        "User-Agent":    "GrantSignal-Digest/1.0",
+        "User-Agent":    "GrantCommand-Digest/1.0",
     }
 
     try:
@@ -526,13 +529,13 @@ def build_free_html(grants: list, total_matched: int, urgency_count: int = 0) ->
     </div>"""
 
     return _email_wrapper(
-        title=f"&#128225; GrantSignal | Your Top 3 Federal Grant Matches This Week",
+        title=f"&#128225; GrantCommand | Your Top 3 Federal Grant Matches This Week",
         preheader="Your top 3 federal grant matches this week — curated for nonprofits and schools.",
         header_sub="Federal Grant Intelligence",
         week_str=week_str,
         intro="Good morning &mdash; here are your top 3 federal grant matches this week, selected for nonprofits and schools like yours.",
         body=grant_html + upgrade_cta,
-        footer_sub="You're receiving this because you subscribed to GrantSignal's free tier.",
+        footer_sub="You're receiving this because you subscribed to GrantCommand's free tier.",
         show_archive_link=False,
     )
 
@@ -568,7 +571,7 @@ def build_paid_html(grants: list, notice_lines: list = None) -> str:
     </div>"""
 
     return _email_wrapper(
-        title=f"&#128225; GrantSignal | Full Weekly Digest &mdash; {count} Grants Matched",
+        title=f"&#128225; GrantCommand | Full Weekly Digest &mdash; {count} Grants Matched",
         preheader=f"Your full weekly digest — {count} federal grant matches curated for nonprofits and schools.",
         header_sub=f"Full Weekly Digest &mdash; {count} Grants Matched",
         week_str=week_str,
@@ -582,7 +585,7 @@ def build_paid_html(grants: list, notice_lines: list = None) -> str:
 def _email_wrapper(title, preheader, header_sub, week_str, intro, body,
                    footer_sub, show_archive_link=False) -> str:
     archive_link = (
-        '&nbsp;&middot;&nbsp;<a href="https://grantsignal.news/archive" '
+        '&nbsp;&middot;&nbsp;<a href="https://grantcommand.com/archive" '
         'style="color:#00897b;text-decoration:underline;">Archive</a>'
         if show_archive_link else ""
     )
@@ -604,7 +607,7 @@ def _email_wrapper(title, preheader, header_sub, week_str, intro, body,
            style="background:#0f3460;border-radius:10px 10px 0 0;">
       <tr>
         <td style="padding:22px 28px;">
-          <div style="color:#ffffff;font-size:22px;font-weight:bold;line-height:1.2;">&#128225; GrantSignal</div>
+          <div style="color:#ffffff;font-size:22px;font-weight:bold;line-height:1.2;">&#128225; GrantCommand</div>
           <div style="color:#4fc3f7;font-size:12px;margin-top:4px;">{header_sub}</div>
         </td>
         <td align="right" style="padding:22px 28px;vertical-align:top;">
@@ -619,7 +622,7 @@ def _email_wrapper(title, preheader, header_sub, week_str, intro, body,
       {body}
     </div>
     <div style="background:#e8eef4;padding:16px 28px;border-radius:0 0 10px 10px;text-align:center;">
-      <div style="font-size:13px;color:#5a6a7a;font-weight:600;">&#128225; GrantSignal &middot; grantsignal.news</div>
+      <div style="font-size:13px;color:#5a6a7a;font-weight:600;">&#128225; GrantCommand &middot; grantcommand.com</div>
       <div style="font-size:12px;color:#8a9ab0;margin-top:6px;line-height:1.5;">{footer_sub}</div>
       <div style="font-size:12px;margin-top:10px;">
         <a href="{{{{unsubscribe_url}}}}" style="color:#00897b;text-decoration:underline;">Unsubscribe</a>
@@ -779,8 +782,8 @@ def save_archive_entry(grants: list, week_date: datetime.date) -> list:
     )
 
     for k, v in {
-        "{{PAGE_TITLE}}":       f"GrantSignal — {week_label}",
-        "{{OG_TITLE}}":         f"GrantSignal Digest — {week_label}",
+        "{{PAGE_TITLE}}":       f"GrantCommand — {week_label}",
+        "{{OG_TITLE}}":         f"GrantCommand Digest — {week_label}",
         "{{OG_DESCRIPTION}}":   f"{grant_count} federal grant opportunities matched this week.",
         "{{META_DESCRIPTION}}": f"{grant_count} federal grant opportunities matched this week.",
         "{{SLUG}}":             slug,
@@ -822,7 +825,7 @@ def save_archive_entry(grants: list, week_date: datetime.date) -> list:
 
 def main() -> None:
     print("=" * 60)
-    print("  GrantSignal Weekly Digest Pipeline")
+    print("  GrantCommand Weekly Digest Pipeline")
     print(f"  {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S UTC')}")
     if DRY_RUN:
         print("  ⚠️  DRY RUN MODE — emails will NOT be sent")
@@ -890,7 +893,7 @@ def main() -> None:
                     print(f"  {sub_email[:25]}… → no preferences, default digest")
     else:
         send_email_batch(free_subs,
-                         "📡 GrantSignal | Your Top 3 Federal Grant Matches This Week",
+                         "📡 GrantCommand | Your Top 3 Federal Grant Matches This Week",
                          free_html, "FREE")
 
         print(f"[digest] Sending personalized digests to {len(paid_subs)} premium subscribers…")
@@ -907,7 +910,7 @@ def main() -> None:
                 sub_html  = default_paid_html
                 count_lbl = total_matched
 
-            subject = f"📡 GrantSignal | {count_lbl} Federal Grant Matches This Week"
+            subject = f"📡 GrantCommand | {count_lbl} Federal Grant Matches This Week"
             if _send_one(sub_email, subject, sub_html):
                 ok += 1
             else:
