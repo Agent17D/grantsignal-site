@@ -520,7 +520,7 @@ def build_free_html(grants: list, total_matched: int, urgency_count: int = 0) ->
         Upgrade to Basic to see all {total_matched} opportunities &mdash;
         including {urgency_count} closing soon
       </div>
-      <a href="https://dereks-newsletter-be7bae.beehiiv.com/upgrade"
+      <a href="https://grantcommand.beehiiv.com/upgrade"
          style="display:inline-block;background:#00897b;color:#ffffff;
                 font-size:15px;font-weight:bold;padding:12px 28px;
                 border-radius:8px;text-decoration:none;">
