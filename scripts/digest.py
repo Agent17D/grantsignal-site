@@ -42,7 +42,7 @@ DRY_RUN         = os.environ.get("DRY_RUN", "false").lower() == "true"
 GRANTS_GOV_ENDPOINT = "https://api.grants.gov/v1/api/search2"
 
 MAX_PAID_GRANTS = 50
-MIN_SCORE       = 2
+MIN_SCORE = 2.5
 URGENCY_DAYS    = 14
 
 NAVY  = "#0f3460"
