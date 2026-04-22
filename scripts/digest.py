@@ -858,6 +858,26 @@ def main() -> None:
     print(f"[dedup] {len(grants)} → {len(unique)} unique grants")
     grants = unique
 
+    # Filter out expired grants (close date in the past)
+    today = datetime.date.today()
+    active = []
+    for g in grants:
+        raw = g.get("closeDate","") or ""
+        if raw:
+            try:
+                import re as _re
+                if _re.match(r"\d{2}/\d{2}/\d{4}", raw):
+                    close_dt = datetime.datetime.strptime(raw, "%m/%d/%Y").date()
+                    if close_dt < today:
+                        continue  # expired — skip
+            except ValueError:
+                pass
+        active.append(g)
+    removed = len(grants) - len(active)
+    if removed:
+        print(f"[expiry] Removed {removed} expired grants ({len(active)} remaining)")
+    grants = active
+
     # ── 2–4. Filter, score, build digests ───────────────────────────────────
     free_digest, paid_digest = build_digests(grants)
     total_matched = len(paid_digest)
