@@ -62,6 +62,9 @@ EXCLUDE_TITLE_PATTERNS = [
     "EONS 2018", "Appendix E", "MUREP",
     "NAGPRA", "Repatriation Grants", "Subaward",
     "Information Collection", "Comment Request",
+    "FY 2012", "FY 2013", "FY 2014", "FY 2015", "FY 2016",
+    "FY 2017", "FY 2018", "FY 2019", "FY 2020",
+    "Developing Methodologies", "Coastal Impacts", "Climate Variability",
 ]
 
 RESEARCH_AGENCY_PATTERNS = [
